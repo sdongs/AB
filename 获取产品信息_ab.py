@@ -4,7 +4,6 @@ Created on Tue Apr 14 09:36:49 2020
 
 @author: sds
 """
-
 import re
 import requests
 from bs4 import BeautifulSoup
