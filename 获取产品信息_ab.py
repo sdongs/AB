@@ -12,7 +12,6 @@ import openpyxl
 import time
 
 
-
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36'}
 '''
 headers={
@@ -25,13 +24,13 @@ headers={
     "User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:55.0) Gecko/20100101 Firefox/55.0"
 }
 '''
+
 def get_html(url):
     resp = requests.get(url,  headers=headers)
     resp.encoding = resp.apparent_encoding
     html = resp.text
     #print(html)
     return html
-
 
 def result(content):
     data_catalog=content[0].attrs.get('data-catalog')#型号
@@ -49,12 +48,9 @@ def result(content):
     return data_catalog,productDescription,data_id,data_date,Replacement_Product
 
 
-
-
 if __name__ == '__main__':
     filename='物料编码-abplc.xlsx'
     wb = openpyxl.load_workbook(filename)
-    #worksheet = workbook.add_worksheet(u'sheet1')#在文件中创建一个名为TEST的sheet,不加名字默认为sheet1
     sh = wb['Sheet1']
     print(sh.max_row)    
     for i in range(2,sh.max_row+1):
@@ -65,18 +61,13 @@ if __name__ == '__main__':
         e=re.sub("-", "",d)
         url="https://www.rockwellautomation.com.cn/global/support/product-compatibility-migration/lifecycle-status/results.page?productid=%s" %e
         html_content = get_html(url)
-        #print(html_content)
-        #f=open("%s.txt" %d,'w', encoding='UTF-8')
-        #f.write(html_content)
         soup = BeautifulSoup(html_content,'html.parser',from_encoding='utf-8')
         content0 =soup.find_all('h4',class_="error")
-        #print(content0)
         content1 =soup.find_all('div',class_="row lifecycle-results active %s" %d)
         content2 =soup.find_all('div',class_="row lifecycle-results mature %s" %d)
         content3 =soup.find_all('div',class_="row lifecycle-results endOfLife %s" %d)
         content4 =soup.find_all('div',class_="row lifecycle-results discontinued %s" %d)
         content=content1+content2+content3+content4
-        #print(content)
         if len(content0)!=0 or len(content)==0 :
             sh.cell(row=i,column=5).value='未查到'
             print('未查到')
